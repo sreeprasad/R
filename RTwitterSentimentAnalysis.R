@@ -1,3 +1,4 @@
+#Twitter Sentiment analysis
 library(twitteR)
 delta.tweets = searchTwitter('@delta', n=1500)
 #length(delta.tweets)
