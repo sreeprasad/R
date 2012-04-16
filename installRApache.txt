@@ -1,0 +1,85 @@
+INSTALL RAPACHE IN MAC
+
+////////////////////////////////////////////////////////////////////////
+original url :
+ http://worldofrcraft.blogspot.com/2010/08/installing-rapache-on-mac-os-x-snow.html
+
+////////////////////////////////////////////////////////////////////////
+1. Install Gnu Fortran on your Mac
+
+You need to install Gnu Fortran on your Mac, because you have to build R on your Mac to run RApache.
+
+Fortunately, there is a nicely Mac-style installer available at 
+http://gcc.gnu.org/wiki/GFortranBinaries#MacOS
+
+Go ahead and install it.
+
+2. Install libapreq on your Mac
+
+libapreq2 is a library for your Apache 2 installation. Download libapreq2-2.12 (or newer) here and install it via Terminal:
+
+tar xzvf libapreq2-2.12.tar.gz
+cd libapreq2-2.12
+./configure 
+make
+sudo make install
+
+3. Build R
+
+Go to your favorite CRAN-mirror (Georg-August Universität Göttingen) and download the source for R, e.g. R-2.11.1.tar.gz (section source code for all platforms). Now build R. Watch out for the configure option --enable-R-shlib! 
+
+tar xzvf R-2.11.1.tar.gz
+
+cd R-2.11.1
+./configure --enable-R-shlib
+make
+sudo make install
+
+4. Install RApache
+
+Download RApache from http://biostat.mc.vanderbilt.edu/rapache/downloads.html
+Install RApache with the special configure option with-apache2-apxs!
+
+tar xzvf rapache-1.1.9.tar.gz
+cd rapache-1.1.9
+./configure --with-apache2-apxs=/usr/sbin/apxs
+sudo make
+sudo make install
+
+5. Reconfigure your Apache
+
+Go to your Apache configuration file:
+
+cd /private/etc/apache2/
+sudo pico httpd.conf
+
+(if you have TextMate installed, just use sudo mate httpd.conf)
+
+now add the line after the other LoadModule entries in the httpd.conf file
+
+LoadModule R_module           libexec/apache2/mod_R.so
+
+Add the following line for debugging just below
+
+ROutputErrors
+
+as well as (put this somewhere at the end of the conf-file:
+
+# Prints out a nice report about R running within Apache
+<Location /RApacheInfo>
+    SetHandler r-info
+</Location>
+
+Save httpd.conf.
+Restart Apache (open up Systempreferences, select Sharing and uncheck and check Websharing).
+Now you should be able to go to
+
+http://yourcomputer/RApacheInfo
+(you find the name of your computer in System preferences -> Sharing if you click on websharing: if websharing is running, it shows you a link to your computer - use the second link)
+
+to get a nice info about RApache running on your system.
+
+Have fun!
+
+Update 8/11/2011
+After that you have to reinstall R from CRAN again, because your regular R install will be broken. Hmmmm, I hope this gives all you RApache-Macheads enough headstart to come up with a cleaner solution.
